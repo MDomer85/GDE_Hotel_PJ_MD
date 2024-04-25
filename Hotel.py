@@ -1,19 +1,25 @@
 #region banner
 def banner():
-        print(" "* 40, r'  _   _       _       _  ')
-        print(" "* 40, r' | | | | ___ | |_ ___| | ')
-        print(" "* 40, r' | |_| |/ _ \| __/ _ \ | ')
-        print(" "* 40, r' |  _  | (_) | ||  __/ | ')
-        print(" "* 40, r' |_| |_|\___/ \__\___|_| ')
-
-
-        print(" ","-"*103) # teli vonal sor
-        # print (" |", " "*101, "|") # üres sor széle elemekkel
-        # print("{:<22} {:<22} {:<22} {:<22} {:<22}".format(
-        #         " | Szoba Szám", "Ágyak", "Ár", "Dátum", "Foglaló Neve | "))
-        # print (" |", "-"*101, "|")
-        print("")
-
+        cls()
+        print(" "* 80, r'  _   _       _       _  ')
+        print(" "* 80, r' | | | | ___ | |_ ___| | ')
+        print(" "* 80, r' | |_| |/ _ \| __/ _ \ | ')
+        print(" "* 80, r' |  _  | (_) | ||  __/ | ')
+        print(" "* 80, r' |_| |_|\___/ \__\___|_| ')
+        # print (" |", " "*185, "|") # üres sor széle elemekkel
+        print (" /", "-"*184, r'\ ')
+        print(" |", " "*184, "|")
+        print("{:<80} {:<105} {:<3}".format(" | ","Válasszon azalábbiak közül"," | "))
+        print(" |", "-"*184, "|")
+        print(" |", " "*184, "|")
+        print("{:<80} {:<105} {:<3}".format(" | ","Szoba foglaláshoz: [1]"," | "))
+        print("{:<80} {:<105} {:<3}".format(" | ","Szoba foglalás lemondásához: [2]"," | "))
+        print("{:<80} {:<105} {:<3}".format(" | ","Foglat szobák listája: [3]"," | "))
+        print("{:<80} {:<105} {:<3}".format(" | ","Foglalások listázása: [4]"," | "))
+        print("{:<80} {:<105} {:<3}".format(" | ","Kilépés: [0]"," | "))
+        print(" |", " "*184, "|")
+        print(" |", "-"*184, "|")
+        
 #endregion 
 
 #region console clear
@@ -22,7 +28,7 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 #endregion
 
-#region classes
+#region Classes
 class Hotel:
         def __init__(self):
                 self.name = 'Hotel-MD'
@@ -37,7 +43,8 @@ class Hotel:
                         def __init__(self, roomNumber,equipment,  price):
                                 self.roomNumber = roomNumber
                                 self.equipment = equipment        
-                                self.price = price * (equipment/2)        
+                                self.price = price * (equipment/2)
+                                self.bedRoom = "Egyszobás"        
                                 
                 
         class twoBedRoom:
@@ -48,15 +55,17 @@ class Hotel:
                         def __init__(self, roomNumber, equipment, price):
                                 self.roomNumber = roomNumber
                                 self.equipment = equipment       
-                                self.price = price*2*(equipment/2)       
+                                self.price = price*2*(equipment/2)
+                                self.bedRoom = "Kétszobás"      
                                 
         
 class reservation:
-        def __init__(self, reservNumber, name, email, roomNumber, pay):
+        def __init__(self, reservNumber, name, email, roomNumber, date, pay):
                 self.reservNumber = reservNumber
                 self.name = name
                 self.email = email
                 self.roomNumber = roomNumber
+                self.date = date
                 self.pay = pay
                                                       
 #endregion                    
@@ -79,12 +88,28 @@ def factory():
                 
                 return name, email
         
-        
-                
-                
-        #legenerálom a szobák tulajdonságit
+        rolls = []
+        def validatedReservation():
+                while True:
+                        tempRoom = random.randint(1,roomNumCount)
+                        if tempRoom not in rolls:
+                                rolls.append(tempRoom)
+                                
+                                tempPrice = 0
+                                for item in roomsList:
+                                        if tempRoom == item.roomNumber:
+                                               tempPrice = item.price
+                                return tempRoom, tempPrice
+        def dateGenerator():
+                day = random.randint(1,31)
+                month = random.randint(5,12)
+                date = "2024-"+str(month)+"-"+str(day)
+                return date
+                        
+                        
+        #Szobák legenerálása
         roomNumCount = 0
-        for item in range(random.randint(3,6)):
+        for item in range(random.randint(5,8)):
              roomNumCount += 1
              roomsList.append(Hotel.oneBedRoom.roomInfo(roomNumCount, random.randint(1,10), 10))
              roomNumCount += 1
@@ -94,49 +119,53 @@ def factory():
         reservNumCount = 0
         for item in range(random.randint(5,8)):
                 reservNumCount += 1
-                templist = personGenerator()
-                reservationList.append(reservation(reservNumCount, templist[0], templist[1],random.randint(1,12) , 69)) #innen folyt kov ranndom.randit csere ellenorzesre h van e szoba szam
-
+                tempnameList = personGenerator()
+                temproomList = validatedReservation()
+                        
+                reservationList.append(reservation(reservNumCount, tempnameList[0], tempnameList[1], temproomList[0] , dateGenerator() , temproomList[1])) #innen folyt kov ranndom.randit csere ellenorzesre h van e szoba szam
 #endregion         
 
-# roomList = []
-# roomList.append(Hotel.oneBedRoom.roomInfo(3,300,5))
-# roomList.append(Hotel.twoBedRoom.roomInfo(4,300,6))
+def reservedListings():
+        banner()
+        print("{:<79} {:<106} {:<3}".format(" | ","Folgalt szobákat választotta"," | "))
+        print (" |", "-"*184, "|")
+        print("{:<3} {:<30} {:<30} {:<30} {:<30} {:<31}{:<27} {:<3}".format(" | ","Foglalás Száma", "Név", "Email cím", "Szobaszám", "Dátum","Fizetendő összeg"," | "))
+        print (" |", "-"*184, "|")
+        for item in reservationList:       
+                print("{:<3} {:<30} {:<30} {:<30} {:<30} {:<30} {:<27} {:<3}".format(f" | ",f"{item.reservNumber}", f"{item.name}", f"{item.email}", f"{item.roomNumber}",f"{item.date}", f"{item.pay} $"," | "))   
+        x = ' \c'
+        print(x.replace('c',""),"-"*184, "/")
 
+def roomListing():
+        banner()
+        print("{:<79} {:<106} {:<3}".format(" | ","Szobák listázását választotta"," | "))
+        print (" |", "-"*184, "|")
+        print("{:<3} {:<45} {:<45} {:<45} {:<44} {:<3}".format(" | ","Szoba Szám","Szobák","Felszereltség","Ár"," | "))
+        print (" |", "-"*184, "|")
+        for item in roomsList:
+                print("{:<3} {:<45} {:<45} {:<45} {:<44} {:<3}".format(" | ",f"{item.roomNumber}",f"{item.bedRoom}", f"{item.equipment} / 10", f"{item.price} $", " | "))
+        x = ' \c'
+        print(x.replace('c',""),"-"*184, "/")
 
-
-
-def menu():
-        
-        print(" Válasszon azalábbiak közül:     \n Szoba foglaláshoz: [1]         \n Szoba foglalás lemondásához: [2]       \n Foglat szobák listája: [3] \n ")
-        
-        selected = int(input("Válaszon: "))
-        
-        if selected == 1:
-               print("Szoba foglalást választotta")
-        elif selected == 2:
-               print("Szoba foglalás lemondását választotta")
-                
-        elif selected == 3:
-                print("Szobák listázását választotta!")
-                
-                for item in roomsList:
-                        print(f"Szoba száma: {item.roomNumber} felszereltsége: {item.equipment} ára: {item.price}$")
-                for item in reservationList:
-                        print(f"Foglalás száma: {item.reservNumber} név: {item.name} email: {item.email} szoba szám: {item.roomNumber} péz: {item.pay}")
-        else:
-                print("Nem megfelelő formátum! \n")
-                return menu()
-                
-   
-
-       
+#region Main
 def Main():
-        cls()
         banner()
         factory()
-        menu()
+        while True:
+                selected = int(input())
+                
+                if selected == 1:
+                        print("Szoba foglalást választotta")
+                elif selected == 2:
+                        print("Szoba foglalás lemondását választotta")   
+                elif selected == 3:
+                        roomListing()
+                elif selected == 4:
+                        reservedListings()
+                elif selected == 0:
+                        break
+                else:
+                        print("Nem megfelelő formátum! \n")
+#endregion 
 
 Main()
-print("")
- 
