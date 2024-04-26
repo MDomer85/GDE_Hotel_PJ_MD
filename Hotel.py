@@ -1,4 +1,9 @@
 #region banner
+
+import os
+def cls():
+    os.system('cls' if os.name=='nt' else 'clear')
+    
 def banner():
         cls()
         print(" "* 80, r'  _   _       _       _  ')
@@ -6,7 +11,6 @@ def banner():
         print(" "* 80, r' | |_| |/ _ \| __/ _ \ | ')
         print(" "* 80, r' |  _  | (_) | ||  __/ | ')
         print(" "* 80, r' |_| |_|\___/ \__\___|_| ')
-        # print (" |", " "*185, "|") # üres sor széle elemekkel
         print (" /", "-"*184, r'\ ')
         print(" |", " "*184, "|")
         print("{:<80} {:<105} {:<3}".format(" | ","Válasszon azalábbiak közül"," | "))
@@ -20,15 +24,13 @@ def banner():
         print(" |", " "*184, "|")
         print(" |", "-"*184, "|")
         
+        #print(" |", " "*184, "|") Üres sor
+        #print(" |", "-"*184, "|") Vonal sor
+        
 #endregion 
 
-#region console clear
-import os
-def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
-#endregion
-
 #region Classes
+
 class Hotel:
         def __init__(self):
                 self.name = 'Hotel-MD'
@@ -44,9 +46,8 @@ class Hotel:
                                 self.roomNumber = roomNumber
                                 self.equipment = equipment        
                                 self.price = price * (equipment/2)
-                                self.bedRoom = "Egyszobás"        
-                                
-                
+                                self.bedRoom = "Egyszobás"                            
+        
         class twoBedRoom:
                 def __init__(self):
                        self.roomInfo = self.roomInfo()
@@ -58,7 +59,6 @@ class Hotel:
                                 self.price = price*2*(equipment/2)
                                 self.bedRoom = "Kétszobás"      
                                 
-        
 class reservation:
         def __init__(self, reservNumber, name, email, roomNumber, date, pay):
                 self.reservNumber = reservNumber
@@ -78,6 +78,8 @@ roomsList = []
 reservationList = []
 
 def factory():
+        
+        #Random név, email létrehozása
         def personGenerator():
                 surnamelist = ["Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor", "Anderson"]
                 firstNamelist = ["Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason", "Isabella", "James"]
@@ -88,6 +90,7 @@ def factory():
                 
                 return name, email
         
+        #Random foglalások létrhozása és validálása
         rolls = []
         def validatedReservation():
                 while True:
@@ -100,14 +103,15 @@ def factory():
                                         if tempRoom == item.roomNumber:
                                                tempPrice = item.price
                                 return tempRoom, tempPrice
+        
+        #Random dátum létrehozása              
         def dateGenerator():
                 day = random.randint(1,31)
                 month = random.randint(5,12)
                 date = "2024-"+str(month)+"-"+str(day)
                 return date
-                        
-                        
-        #Szobák legenerálása
+                           
+        #Szobák legenerálása és listába írása
         roomNumCount = 0
         for item in range(random.randint(5,8)):
              roomNumCount += 1
@@ -115,30 +119,38 @@ def factory():
              roomNumCount += 1
              roomsList.append(Hotel.twoBedRoom.roomInfo(roomNumCount, random.randint(1,10), 10))
         
-        #random foglalások legenrálása
+        #Random foglalások legenrálása és listába írása
         reservNumCount = 0
         for item in range(random.randint(5,8)):
                 reservNumCount += 1
                 tempnameList = personGenerator()
                 temproomList = validatedReservation()
                         
-                reservationList.append(reservation(reservNumCount, tempnameList[0], tempnameList[1], temproomList[0] , dateGenerator() , temproomList[1])) #innen folyt kov ranndom.randit csere ellenorzesre h van e szoba szam
+                reservationList.append(reservation(reservNumCount, tempnameList[0], tempnameList[1], temproomList[0] , dateGenerator() , temproomList[1])) 
+
 #endregion
          
 #region Booking
+
+
 def booking():
         from datetime import datetime
         from datetime import date
+        
+        #Banner frissitése
         def refresh():
                 banner()
                 print("{:<80} {:<105} {:<3}".format(" | ","Foglalást választotta"," | "))
                 print (" |", "-"*184, "|")
         
         #region Validation
+        
+        #Név validálása
         def validateName():
                 temp = input()
                 return temp
         
+        #Email validálása 
         def validateEmail():
                 try:
                         temp = input()
@@ -148,7 +160,8 @@ def booking():
                                 return True, temp
                 except:
                         return False, temp
-                
+        
+        #Szoba szám validálása        
         def validateRoomNumber():
                 try:
                         temp = int(input())
@@ -161,6 +174,7 @@ def booking():
                 except ValueError:
                         return False, "interror"
         
+        #Dátum validálása
         def validateDate(wantedRoom):
 
                 temp = input()
@@ -176,6 +190,7 @@ def booking():
                        return False, "formaterror"
         #endregion       
         
+        #Foglalás elmentése
         def savebooking():
                 price = 0
                 for item in roomsList:
@@ -193,10 +208,10 @@ def booking():
                 x = ' \c'
                 print(x.replace('c',""),"-"*184, "/")
                 
-                
+        #Lépésenkénti betöltés a megadott adatokkal és az adatok validálása        
         book = []
         refresh()
-#region Nightmare
+
         def lvl1():
                 refresh()
                 print("{:<80} {:<105} {:<3}".format(" | ",f"Név: {book[0]} "," | "))
@@ -209,8 +224,7 @@ def booking():
         def lvl4():
                 lvl3()
                 print("{:<80} {:<105} {:<3}".format(" | ",f"Dátum: {book[3]} "," | "))
-#endregion
-
+        
         while True: 
                 if len(book) != 0:
                         lvl1()
@@ -244,7 +258,6 @@ def booking():
                                                                 print("{:<80} {:<105} {:<3}".format(" | ",f"Nyomj entert az újrapróbáláshoz! "," | "))
                                                                 input()
                                                                 break
-                                                
                                 else:
                                         print("{:<80} {:<105} {:<3}".format(" | ",f"Szoba szám: [____________] "," | "))
                                         array = validateRoomNumber()
@@ -261,8 +274,7 @@ def booking():
                                                         print("{:<80} {:<105} {:<3}".format(" | ",f"Csak szám érték szerepelhet! "," | "))
                                                         print("{:<80} {:<105} {:<3}".format(" | ",f"Nyomj entert az újrapróbáláshoz! "," | "))
                                                         input()
-                                                        break
-                                
+                                                        break 
                         else: 
                                 print("{:<80} {:<105} {:<3}".format(" | ",f"Email: [____________] "," | "))
                                 array = validateEmail()
@@ -278,11 +290,14 @@ def booking():
                 else:
                         print("{:<80} {:<105} {:<3}".format(" | ",f"Név: [____________] "," | "))
                         book.append(validateName())
+                        
 #endregion                                         
 
 #region Resignation
 
 def resignation():
+        
+        #banner frissítése
         def refresh():
                 banner()
                 print("{:<80} {:<105} {:<3}".format(" | ",f"A foglalás lemondását választotta!"," | "))
@@ -293,13 +308,16 @@ def resignation():
                         print("{:<3} {:<30} {:<30} {:<30} {:<30} {:<30} {:<27} {:<3}".format(f" | ",f"{item.reservNumber}", f"{item.name}", f"{item.email}", f"{item.roomNumber}",f"{item.date}", f"{item.pay} $"," | "))   
                 print (" |", "-"*184, "|") 
                 print (" |", " "*184, "|")
+                
+        #Adat validálása
         def validateInput():
                 try:
                         asd = int(input())
                         return True, asd
-                
+
                 except ValueError:
                         return False, "format"
+        #Lemondás
         resigNumber = 0
         while True:
                 refresh()
@@ -333,6 +351,8 @@ def resignation():
 #endregion
 
 #region Listings
+
+#Foglalások listázása
 def reservedListings():
         banner()
         print("{:<79} {:<106} {:<3}".format(" | ","Folgalt szobákat választotta"," | "))
@@ -344,6 +364,7 @@ def reservedListings():
         x = ' \c'
         print(x.replace('c',""),"-"*184, "/")
 
+#Szobák tulajdonságainak listázása
 def roomListing():
         banner()
         print("{:<79} {:<106} {:<3}".format(" | ","Szobák listázását választotta"," | "))
@@ -354,13 +375,16 @@ def roomListing():
                 print("{:<3} {:<45} {:<45} {:<45} {:<44} {:<3}".format(" | ",f"{item.roomNumber}",f"{item.bedRoom}", f"{item.equipment} / 10", f"{item.price} $", " | "))
         x = ' \c'
         print(x.replace('c',""),"-"*184, "/")
+        
 #endregion
 
 #region Main
+
 def Main():
         banner()
         factory()
         
+        #Menü navigálás
         while True:
                 try:
                         selected = int(input())
@@ -375,9 +399,9 @@ def Main():
                         elif selected == 0:
                                 break
                         else:
-                                print("Nem megfelelő formátum! \n")
-                except:
-                        pass
+                                print("Hiba, [1]-től [4]-ig válasszon! Kilépéshez [0] \n")
+                except ValueError:
+                        print("Hiba, [1]-től [4]-ig válasszon! Kilépéshez [0] \n") 
 #endregion 
 
 
