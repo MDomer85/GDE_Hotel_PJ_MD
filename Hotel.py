@@ -156,9 +156,10 @@ def booking():
                         if 1 <= temp <= availableRooms:
                                 return True, temp
                         else:
-                                return False, availableRooms
-                except:
-                        return False, availableRooms
+                                return False, "outbounderror"
+                        
+                except ValueError:
+                        return False, "interror"
         
         def validateDate(wantedRoom):
 
@@ -188,7 +189,10 @@ def booking():
                 print(" |", "-"*184, "|")
                 print("{:<58} {:<127} {:<3}".format(" | ",f"A {book[2]}. Szoba {book[3]}-ai dátummal, {book[0]}-néven lefoglalva"," | "))
                 print("{:<80} {:<105} {:<3}".format(" | ",f"Fizetendő összeg: {price} $"," | "))
-                input()
+                print(" |", " "*184, "|")
+                x = ' \c'
+                print(x.replace('c',""),"-"*184, "/")
+                
                 
         book = []
         refresh()
@@ -248,8 +252,13 @@ def booking():
                                                 if array[0] is True:
                                                         book.append(array[1])
                                                         break
-                                                else:
+                                                elif array[0] is False and array[1] == "outbounderror":
                                                         print("{:<80} {:<105} {:<3}".format(" | ",f"Hibás Szobaszám (1-{array[1]}.ig válasszon) "," | "))
+                                                        print("{:<80} {:<105} {:<3}".format(" | ",f"Nyomj entert az újrapróbáláshoz! "," | "))
+                                                        input()
+                                                        break
+                                                elif array[0] is False and array[1] == "interror":
+                                                        print("{:<80} {:<105} {:<3}".format(" | ",f"Csak szám érték szerepelhet! "," | "))
                                                         print("{:<80} {:<105} {:<3}".format(" | ",f"Nyomj entert az újrapróbáláshoz! "," | "))
                                                         input()
                                                         break
@@ -271,7 +280,57 @@ def booking():
                         book.append(validateName())
 #endregion                                         
 
+#region Resignation
 
+def resignation():
+        def refresh():
+                banner()
+                print("{:<80} {:<105} {:<3}".format(" | ",f"A foglalás lemondását választotta!"," | "))
+                print (" |", "-"*184, "|")
+                print("{:<3} {:<30} {:<30} {:<30} {:<30} {:<31}{:<27} {:<3}".format(" | ","Foglalás Száma", "Név", "Email cím", "Szobaszám", "Dátum","Fizetendő összeg"," | "))
+                print (" |", "-"*184, "|")
+                for item in reservationList:       
+                        print("{:<3} {:<30} {:<30} {:<30} {:<30} {:<30} {:<27} {:<3}".format(f" | ",f"{item.reservNumber}", f"{item.name}", f"{item.email}", f"{item.roomNumber}",f"{item.date}", f"{item.pay} $"," | "))   
+                print (" |", "-"*184, "|") 
+                print (" |", " "*184, "|")
+        def validateInput():
+                try:
+                        asd = int(input())
+                        return True, asd
+                
+                except ValueError:
+                        return False, "format"
+        resigNumber = 0
+        while True:
+                refresh()
+                print("{:<70} {:<115} {:<3}".format(" | ",f"Adja meg a sorszámát, a törölni kívánt foglalásnak: [___] "," | "))
+                if resigNumber == 0:
+                        array = validateInput()
+                        while True:
+                                refresh()
+                                print("{:<70} {:<115} {:<3}".format(" | ",f"Adja meg a sorszámát, a törölni kívánt foglalásnak: [___] "," | "))
+                                if array[0] is True:
+                                        resigNumber = array[1]
+                                        break
+                                elif array[1] == "format":
+                                        print("{:<88} {:<97} {:<3}".format(" | ",f"Hibás Formátum! "," | "))
+                                        print("{:<80} {:<105} {:<3}".format(" | ",f"Nyomj entert az újrapróbáláshoz! "," | "))
+                                        input()
+                                        break
+                else:
+                       
+                        for i, item in enumerate(reservationList):
+                                if item.reservNumber == resigNumber:
+                                        del reservationList[i]
+                                        refresh()
+                                        print("{:<78} {:<107} {:<3}".format(" | ",f"Sikeresen törölte a {i+1}. foglalást!"," | "))
+                                        print(" |", " "*184, "|")
+                                        x = ' \c'
+                                        print(x.replace('c',""),"-"*184, "/")   
+                        break                
+                              
+
+#endregion
 
 #region Listings
 def reservedListings():
@@ -306,10 +365,9 @@ def Main():
                 try:
                         selected = int(input())
                         if selected == 1:
-                                print("Szoba foglalást választotta")
                                 booking()
                         elif selected == 2:
-                                print("Szoba foglalás lemondását választotta")   
+                                resignation() 
                         elif selected == 3:
                                 roomListing()
                         elif selected == 4:
